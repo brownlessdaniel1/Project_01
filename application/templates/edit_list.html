@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>{{ list_name }}</title>
+    </head>
+    <body>
+        <h2>{{ list_name }}</h2>
+        <a href="/">back</a>
+        <hr>
+            <table>
+                {% for item in tasks %}
+                <tr>
+                    <td>{{ item }}</td>
+                    <td><a href="/delete_task/{{ list_name }}/{{ item }}">delete</a></td>
+                </tr>
+                {% endfor %}
+                <tr class="form">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <td>{{ form.user_input }}</td> 
+                    <td>{{ form.submit }}</td>
+                </tr>
+            </table>
+            <hr>
+            {{ message }}
+    </body>
+</html>

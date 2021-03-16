@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <title>ToDoLists</title>
+    </head>
+    <body>
+        <h1>To Do Lists!</h1>
+        <div>
+            <p>Welcome!</p>
+            <p>To get started, click on a list to edit it, or create a new list.</p>
+            <hr>
+            <table>
+                {% for item in lists %}
+                <tr>
+                    <td><a href="/edit_list/{{ item }}">{{ item }}</a></td>
+                    <td><a href="/delete_list/{{ item }}">delete</a></td>
+                </tr>
+                {% endfor %}
+                <tr class="form">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <td>{{ form.user_input }}</td>
+                    <td>{{ form.submit }}</td>                     
+                </tr>
+            </table>
+            <hr>
+            {{ message }}
+        </div>
+    </body>
+</html>
