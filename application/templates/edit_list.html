@@ -7,10 +7,11 @@
         <a href="/">back</a>
         <hr>
             <table>
-                {% for item in tasks %}
+                {% for item in non_done_tasks %}
                 <tr>
                     <td>{{ item }}</td>
-                    <td><a href="/delete_task/{{ list_name }}/{{ item }}">delete</a></td>
+                    <td><a href="{{ url_for('markDoneTask',list_name=list_name,task_name=item) }}">done</a></td>
+                    <td><a href="{{ url_for('deleteTask',list_name=list_name,task_name=item) }}">delete</a></td>                    
                 </tr>
                 {% endfor %}
                 <tr class="form">
@@ -19,7 +20,15 @@
                     <td>{{ form.user_input }}</td> 
                     <td>{{ form.submit }}</td>
                 </tr>
+                <tr>
+                    {% for item in done_tasks %}
+                    <td><del>{{ item }}</del></td>
+                    <td><a href="{{ url_for('markNotDoneTask',list_name=list_name,task_name=item) }}" >not done</a></td>
+                    <td><a href="{{ url_for('deleteTask',list_name=list_name,task_name=item) }}">delete</a></td>   
+                </tr>
+                {% endfor %}
             </table>
+            <hr>
             <hr>
             {{ message }}
     </body>
