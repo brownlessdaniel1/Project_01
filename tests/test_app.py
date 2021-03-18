@@ -71,10 +71,11 @@ class TestDelete(TestBase):
 
 class TestValidators(TestBase):
     # Validators for both list name and task name.
-
-class TestRobustDynamicLists
+    pass
+class TestRobustDynamicLists(TestBase):
     # Tests to ensure that redirect methods for delete and edit pages
     # can't be fooled by non-existent items.
-
+    pass
 class TestRoutes(TestBase):
     #Test200 for all routes.
+    pass

@@ -70,7 +70,7 @@ def editList(list_name):
         else:
             non_done_tasks.append(item.name)
     
-    return render_template("edit.html", list_name=list_name, non_done_tasks=non_done_tasks, done_tasks=done_tasks, form=task_input, message=message)
+    return render_template("edit_list.html", list_name=list_name, non_done_tasks=non_done_tasks, done_tasks=done_tasks, form=task_input, message=message)
 
 # Update List
 @app.route("/rename/<list_name>", methods=["GET", "POST"])

@@ -30,6 +30,15 @@ def getListsNames():
 def getTasks(list_id):
     return  Task.query.filter_by(list_id=list_id).all()
 
+def getTaskCount(list_name):
+    list_id = getListId(list_name)
+    return Task.query.filter_by(list_id=list_id).count()
+
+def getDoneTaskCount(list_name):
+    list_id = getListId(list_name)
+    return Task.query.filter_by(list_id=list_id, done=True).count()
+
+
 def listExists(list_name):
     return Checklist.query.filter_by(name=list_name).first() is not None
 
@@ -48,12 +57,3 @@ def notDoneListNames():
     not_done_lists = Checklist.query.filter_by(done=False)
     not_done_list_names = [item.name for item in not_done_lists] 
     return not_done_list_names
-
-def checkListDone(list_name):
-    list_id = getListId(list_name)
-    return Task.query.filter_by(list_id=list_id, done=False).count() == 0
-
-def markDoneIfNeeded(list_name):
-    if checkListDone(list_name):
-        Checklist.query.filter_by(name=list_name).done = True
-    return "Done!"
