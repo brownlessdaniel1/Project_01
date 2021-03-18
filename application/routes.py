@@ -1,6 +1,6 @@
 from flask import request, render_template, url_for, redirect
 from datetime import datetime
-from application.models import Checklist, Task, getListId, getTaskId, getTasks, listExists, taskExists, doneListNames, notDoneListNames, checkListDone, markDoneIfNeeded, getListsNames
+from application.models import Checklist, Task, getListId, getTaskId, getTasks, listExists, taskExists, doneListNames, notDoneListNames, getListsNames, getTaskCount, getDoneTaskCount
 from application.forms import TaskForm, ListForm, RenameForm
 from application import db, app
 
@@ -10,39 +10,42 @@ db.create_all()
 # Create list
 @app.route("/", methods=["GET", "POST"])
 def home():
-    list_input = ListForm()
+    # Create
+
     message = "Add a new list, or select a list to edit."
+    error_text = ""
+
+    list_input = ListForm()
     if request.method == "POST" and list_input.validate_on_submit():
-        new_list = Checklist(name=list_input.user_input.data) # done=False
+        new_list = Checklist(name=list_input.user_input.data)
         db.session.add(new_list)
         db.session.commit()
-        list_input.user_input.data=""
-        message = "list added!"
+        return redirect(url_for("editList", list_name=new_list.name))
     else:
         if list_input.user_input.errors:
-            message = list_input.user_input.errors[0]
+            error_text = list_input.user_input.errors[0]
 
+    # Read
+    list_details = {}
+    for item in Checklist.query.all():
+        list_details[item.name] = [getDoneTaskCount(item.name), getTaskCount(item.name), item.date_created, item.date_done]
     
-    Checklist.query.all() ## map all lists to the 'doner' function
-
-    all_list_names = getListsNames()
-    for item in all_list_names:
-        markDoneIfNeeded(item)
-    map(markDoneIfNeeded, all_list_names)
     done_lists = doneListNames()
     non_done_lists = notDoneListNames()
 
-    return render_template('home.html', non_done_lists=non_done_lists, done_lists=done_lists, form=list_input, message=message)
+    return render_template('home.html', non_done_lists=non_done_lists, done_lists=done_lists, list_details=list_details, form=list_input, message=message, error_text=error_text)
 
+    
 # Create task
 @app.route("/edit_list/<list_name>", methods=["GET", "POST"])
 def editList(list_name):
-    if not Checklist.query.filter_by(name=list_name).first():    # Robust to nonexistent links.
+
+    if not listExists(list_name):
         return redirect(url_for("home"))
+
     list_id = str(Checklist.query.filter_by(name=list_name).first().id)
     task_input = TaskForm()
     message = "Add tasks!"
-
     if request.method == "POST" and task_input.validate_on_submit():
         new_task = Task(name=task_input.user_input.data, list_id=list_id, done=False)
         db.session.add(new_task)
@@ -67,7 +70,7 @@ def editList(list_name):
         else:
             non_done_tasks.append(item.name)
     
-    return render_template("edit_list.html", list_name=list_name, non_done_tasks=non_done_tasks, done_tasks=done_tasks, form=task_input, message=message)
+    return render_template("edit.html", list_name=list_name, non_done_tasks=non_done_tasks, done_tasks=done_tasks, form=task_input, message=message)
 
 # Update List
 @app.route("/rename/<list_name>", methods=["GET", "POST"])
@@ -83,23 +86,22 @@ def renameList(list_name):
         list_pending_update = Checklist.query.filter_by(name=list_name).first()
         list_pending_update.name = rename_list.user_input.data        
         db.session.commit()
-
+        
         message = "list renamed!"
         return redirect(url_for("home"))
     else:
         if rename_list.user_input.errors:
             message = rename_list.user_input.errors[0]
     
-    lists = Checklist.query.all()
-    lists_to_be_displayed = []
-    done_lists = []
-    for item in lists:
-        lists_to_be_displayed.append(item.name)
-        if item.done == True:
-            done_lists.append(item.name)
+    # get list attributes as dict.
+    list_details = {}
+    for item in Checklist.query.all():
+        list_details[item.name] = [getDoneTaskCount(item.name), getTaskCount(item.name), item.date_created, item.date_done]
     
+    done_lists = doneListNames()
+    non_done_lists = notDoneListNames()
 
-    return render_template('rename_list.html', lists=lists_to_be_displayed, done_lists=done_lists, form=rename_list, message=message)
+    return render_template('home.html', non_done_lists=non_done_lists, done_lists=done_lists, list_details=list_details, form=rename_list, message=message)
 
 # Update List
 @app.route("/mark_done/<list_name>")
@@ -147,6 +149,20 @@ def markDoneTask(list_name, task_name):
     task_pending_update.date_done = str(datetime.today())[0:10]
     db.session.commit()
 
+    
+
+# set list.done = true if all tasks are done.
+    
+    if getTaskCount(list_name) == getDoneTaskCount(list_name):
+
+        list_pending_update = Checklist.query.filter_by(name=list_name).first()
+        list_pending_update.done = True
+        list_pending_update.date_done = str(datetime.today())[0:10]
+        db.session.commit()  
+
+
+    return redirect(url_for("editList", list_name=list_name))
+
 # Update Task
 @app.route("/mark_not_done/<list_name>/<task_name>")
 def markNotDoneTask(list_name, task_name):
@@ -158,6 +174,14 @@ def markNotDoneTask(list_name, task_name):
     task_pending_update.done = False
     task_pending_update.date_done = "-"
     db.session.commit()
+
+    # set list.done = False if not all tasks are done.
+    
+    if getTaskCount(list_name) != getDoneTaskCount(list_name):
+        list_pending_update = Checklist.query.filter_by(name=list_name).first()
+        list_pending_update.done = False
+        list_pending_update.date_done = "-"
+        db.session.commit()
 
     return redirect(url_for("editList", list_name=list_name))
 
