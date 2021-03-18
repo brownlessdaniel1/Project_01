@@ -35,7 +35,7 @@ class SpecialCharacterCheck:
     def __init__(self, invalid_characters, message=None):
         self.invalid_characters = invalid_characters
         if not message:
-            message = "Input cannot include special characters (! \" £ % ^ & * () _ + { } @ ~ \', \ / | ? ¬ `) ; : )"
+            message = "Input cannot include special characters (! \" £ % ^ & * () _ + { } @ ~ \', \ / | ? ¬ `)"
             self.message = message
 
     def __call__(self, form, field):
@@ -49,7 +49,7 @@ class ListForm(FlaskForm):
         Length(max=20),
         AvailableNameCheck(),
         RestrictedWordCheck(invalid_names=["admin", "root"]),
-        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬", ";", ":"])]
+        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬"])]
         )
     submit = SubmitField('Add')
 
@@ -59,7 +59,7 @@ class RenameForm(FlaskForm):
         Length(max=20),
         AvailableNameCheck(),
         RestrictedWordCheck(invalid_names=["admin", "root"]),
-        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬", ";", ":"])]
+        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬"])]
         )
     submit = SubmitField('Submit')
 
@@ -68,7 +68,7 @@ class TaskForm(FlaskForm):
         DataRequired(),
         Length(max=20),
         RestrictedWordCheck(invalid_names=["admin", "root"]),
-        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬", ";", ":"])]
+        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬"])]
         )
     submit = SubmitField('Add')
 
