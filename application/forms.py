@@ -44,7 +44,7 @@ class SpecialCharacterCheck:
                 raise ValidationError(self.message)
 
 class ListForm(FlaskForm):
-    user_input = StringField('List Name', validators=[
+    user_input = StringField("List Name", validators=[
         DataRequired(),
         Length(max=20),
         AvailableNameCheck(),
@@ -53,11 +53,23 @@ class ListForm(FlaskForm):
         )
     submit = SubmitField('Add')
 
+class RenameForm(FlaskForm):
+    user_input = StringField("List Name", validators=[
+        DataRequired(),
+        Length(max=20),
+        AvailableNameCheck(),
+        RestrictedWordCheck(invalid_names=["admin", "root"]),
+        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬"])]
+        )
+    submit = SubmitField('Submit')
+
 class TaskForm(FlaskForm):
-    user_input = StringField('List Name', validators=[
+    user_input = StringField("List Name", validators=[
         DataRequired(),
         Length(max=20),
         RestrictedWordCheck(invalid_names=["admin", "root"]),
         SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬"])]
         )
     submit = SubmitField('Add')
+
+
