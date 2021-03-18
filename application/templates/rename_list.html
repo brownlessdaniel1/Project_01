@@ -10,44 +10,44 @@
             <p>Welcome!</p>
             <p>To get started, click on a list to edit it, or create a new list.</p>
             <hr>
-            <table style="width: 50%">
+            <table style="width: 60%">
                 <th>list</th>
                 <th></th>
                 <th></th>
                 <th></th>
+                <th>done tasks</th>
+                <th>total tasks</th>
                 <th>date created</th>
                 <th>date done</th>
                 {% for item in non_done_lists %}
                 <tr>
                     <td><a href="{{ url_for('editList',list_name=item) }}">{{ item }}</a></td>
                     <td><a href="{{ url_for('markDoneList',list_name=item) }}">done</a></td>
-                    <!-- <td><form action = "{{ url_for('markDoneList',list_name=item) }}"><input type="submit" value="done"/></form></td> -->
                     <td><a href="{{ url_for('renameList',list_name=item) }}">rename</a></td>
-                    <!-- <td><form action = "{{ url_for('renameList',list_name=item) }}"><input type="submit" value="rename"/></form></td> -->
-                    <!-- <td><form action = "{{ url_for('deleteList',list_name=item) }}"><input type="submit" value="delete"/></form></td> -->
                     <td><a href="{{ url_for('deleteList',list_name=item) }}">delete</a></td>
-                    <td>{{ item.date_created }}</td>
-                    <td>{{ item.date_done }}</td>
+                    <td>{{ list_details[item][0] }}</td>
+                    <td>{{ list_details[item][1] }}</td>
+                    <td>{{ list_details[item][2] }}</td>
+                    <td style="text-align: center;">{{ list_details[item][3] }}</td>
                 </tr>
                 {% endfor %}
                 <tr class="form">
-                <form method="POST" action="">
-                    {{ form.hidden_tag() }}
-                    <td>{{ form.user_input }}</td>
-                    <td>{{ form.submit }}</td>                     
-                </tr>
-                <tr><p> </p></tr>
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <td>{{ form.user_input }}</td>
+                        <td>{{ form.submit }}</td>                     
+                    </tr>
+                {% for item in done_lists %}
                 <tr>
-                    {% for item in done_lists %}
+                    
                     <td><a href="{{ url_for('editList',list_name=item) }}"><del>{{ item }}</del></a></td>
                     <td><a href="{{ url_for('markNotDoneList',list_name=item) }}">not done</a></td>
-                    <!-- <td><form action = "{{ url_for('markNotDoneList',list_name=item) }}"><input type="submit" value="not done"/></form></td> -->
                     <td><a href="{{ url_for('renameList',list_name=item) }}">rename</a></td>
-                    <!-- <td><form action = "{{ url_for('renameList',list_name=item) }}"><input type="submit" value="rename"/></form></td> -->
                     <td><a href="{{ url_for('deleteList',list_name=item) }}">delete</a></td>
-                    <!-- <td><form action = "{{ url_for('deleteList',list_name=item) }}"><input type="submit" value="delete"/></form></td> -->
-                    <td>{{ item.date_created }}</td>
-                    <td>{{ item.date_done }}</td>
+                    <td>{{ list_details[item][0] }}</td>
+                    <td>{{ list_details[item][1] }}</td>
+                    <td>{{ list_details[item][2] }}</td>
+                    <td style="text-align: center;">{{ list_details[item][3] }}</td>
                 </tr>
                 {% endfor %}
             </table>
