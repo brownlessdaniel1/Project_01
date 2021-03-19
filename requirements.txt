@@ -8,4 +8,4 @@ pytest
 pytest-cov
 flask-testing
 pymysql
-gunicorn
+gunicorn3
