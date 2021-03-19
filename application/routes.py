@@ -151,7 +151,7 @@ def markDoneTask(list_name, task_name):
 
     
 
-# set list.done = true if all tasks are done.
+    # set list.done = true if all tasks are done.
     
     if getTaskCount(list_name) == getDoneTaskCount(list_name):
 
