@@ -57,3 +57,13 @@ def notDoneListNames():
     not_done_lists = Checklist.query.filter_by(done=False)
     not_done_list_names = [item.name for item in not_done_lists] 
     return not_done_list_names
+
+def doneTaskNames(list_id):
+    done_tasks = Task.query.filter_by(list_id=list_id, done=True)
+    done_task_names = [item.name for item in done_tasks] 
+    return done_task_names
+
+def notDoneTaskNames(list_id):
+    not_done_tasks = Task.query.filter_by(list_id=list_id, done=False)
+    not_done_task_names = [item.name for item in not_done_tasks] 
+    return not_done_task_names

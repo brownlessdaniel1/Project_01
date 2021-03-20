@@ -1,6 +1,6 @@
 from flask import request, render_template, url_for, redirect
 from datetime import datetime
-from application.models import Checklist, Task, getListId, getTaskId, getTasks, listExists, taskExists, doneListNames, notDoneListNames, getListsNames, getTaskCount, getDoneTaskCount
+from application.models import Checklist, Task, getListId, getTaskId, getTasks, listExists, taskExists, doneListNames, notDoneListNames, getListsNames, getTaskCount, getDoneTaskCount, doneTaskNames, notDoneTaskNames
 from application.forms import TaskForm, ListForm, RenameForm
 from application import db, app
 
@@ -30,16 +30,23 @@ def home():
     for item in Checklist.query.all():
         list_details[item.name] = [getDoneTaskCount(item.name), getTaskCount(item.name), item.date_created, item.date_done]
     
+
+    # Display config:
+
     done_lists = doneListNames()
     non_done_lists = notDoneListNames()
+
     if len(done_lists) == 0:
         done_lists_exists = False
     else:
         done_lists_exists = True
+    if len(non_done_lists) == 0:
+        non_done_lists_exists = False
+    else:
+        non_done_lists_exists = True
 
-    return render_template('home.html', non_done_lists=non_done_lists, done_lists=done_lists, done_lists_exists = done_lists_exists, list_details=list_details, form=list_input, message=message, error_text=error_text)
+    return render_template('home.html', non_done_lists_exists=non_done_lists_exists, non_done_lists=non_done_lists, form=list_input, list_details=list_details, done_lists_exists=done_lists_exists, done_lists=done_lists, message=message, error_text=error_text)
 
-    
 # Create task
 @app.route("/edit_list/<list_name>", methods=["GET", "POST"])
 def editList(list_name):
@@ -47,35 +54,45 @@ def editList(list_name):
     if not listExists(list_name):
         return redirect(url_for("home"))
 
-    list_id = str(Checklist.query.filter_by(name=list_name).first().id)
-    task_input = TaskForm()
+    list_id = getListId(list_name)
+
     message = "Add tasks!"
+    error_text = ""
+
+    task_input = TaskForm()
     if request.method == "POST" and task_input.validate_on_submit():
-        new_task = Task(name=task_input.user_input.data, list_id=list_id, done=False)
+        new_task = Task(name=task_input.user_input.data, list_id=list_id)
         db.session.add(new_task)
         db.session.commit()
         task_input.user_input.data = ""
         message = "task added!"
     else:
         if task_input.user_input.errors:
-            message = task_input.user_input.errors[0]
-    # Checklist.getlists
-            # returns a list of lists objects
-
-    # If Checklist.countTasks() == 0:
-
-
-    tasks = Task.query.filter_by(list_id=list_id).all()
-    non_done_tasks = []
-    done_tasks = []
-    for item in tasks:
-        if item.done == True:
-            done_tasks.append(item.name)
-        else:
-            non_done_tasks.append(item.name)
+            error_text = task_input.user_input.errors[0]
     
-    return render_template("edit_list.html", list_name=list_name, non_done_tasks=non_done_tasks, done_tasks=done_tasks, form=task_input, message=message)
+    # Read
+    task_details = {}
+    for item in Task.query.all():
+        task_details[item.name] = [item.date_done]
+    
 
+    # Display config:
+
+    done_tasks = doneTaskNames(list_id=list_id)
+    non_done_tasks = notDoneTaskNames(list_id=list_id)
+
+    if len(done_tasks) == 0:
+        done_tasks_exists = False
+    else:
+        done_tasks_exists = True
+    if len(non_done_tasks) == 0:
+        non_done_tasks_exists = False
+    else:
+        non_done_tasks_exists = True
+    
+    return render_template("edit_list.html", list_name=list_name, non_done_tasks_exists=non_done_tasks_exists, non_done_tasks=non_done_tasks, form=task_input, task_details=task_details, done_tasks_exists=done_tasks_exists, done_tasks=done_tasks, message=message, error_text=error_text)
+    
+    
 # Update List
 @app.route("/rename/<list_name>", methods=["GET", "POST"])
 def renameList(list_name):
@@ -83,29 +100,40 @@ def renameList(list_name):
     if not listExists(list_name):
         return redirect(url_for("home"))
 
-    rename_list = RenameForm()
     message = f"Enter a new name for {list_name}"
-    
+    error_text = ""
+
+    rename_list = RenameForm()
     if request.method == "POST" and rename_list.validate_on_submit():
         list_pending_update = Checklist.query.filter_by(name=list_name).first()
         list_pending_update.name = rename_list.user_input.data        
         db.session.commit()
-        
         message = "list renamed!"
         return redirect(url_for("home"))
     else:
         if rename_list.user_input.errors:
-            message = rename_list.user_input.errors[0]
-    
-    # get list attributes as dict.
+            error_text = rename_list.user_input.errors[0]
+
+    # Read
     list_details = {}
     for item in Checklist.query.all():
         list_details[item.name] = [getDoneTaskCount(item.name), getTaskCount(item.name), item.date_created, item.date_done]
-    
+
+    # Display config:
+
     done_lists = doneListNames()
     non_done_lists = notDoneListNames()
 
-    return render_template('home.html', non_done_lists=non_done_lists, done_lists=done_lists, list_details=list_details, form=rename_list, message=message)
+    if len(done_lists) == 0:
+        done_lists_exists = False
+    else:
+        done_lists_exists = True
+    if len(non_done_lists) == 0:
+        non_done_lists_exists = False
+    else:
+        non_done_lists_exists = True
+
+    return render_template('rename_list.html', list_name=list_name, non_done_lists_exists=non_done_lists_exists, non_done_lists=non_done_lists, form=rename_list, list_details=list_details, done_lists_exists=done_lists_exists, done_lists=done_lists, message=message, error_text=error_text)
 
 # Update List
 @app.route("/mark_done/<list_name>")
