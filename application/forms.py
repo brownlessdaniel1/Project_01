@@ -48,7 +48,9 @@ class RestrictedWordCheck:
             raise ValidationError(self.message)
 
 class SpecialCharacterCheck:
-    def __init__(self, invalid_characters, message=None):
+    def __init__(self, invalid_characters=None, message=None):
+        if not invalid_characters:
+            invalid_characters = ["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "-", "=" "+", "{", "}", "[", "]" "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬", ";", ":", "#"]
         self.invalid_characters = invalid_characters
         if not message:
             message = "Input cannot include special characters!"
@@ -65,8 +67,8 @@ class ListForm(FlaskForm):
         Length(max=20),
         ListAvailableNameCheck(),
         RestrictedWordCheck(invalid_names=["admin", "root"]),
-        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬", ";", ":"])]
-        )
+        SpecialCharacterCheck()
+    ])
     submit = SubmitField('Add')
 
 class RenameForm(FlaskForm):
@@ -75,8 +77,8 @@ class RenameForm(FlaskForm):
         Length(max=20),
         ListAvailableNameCheck(),
         RestrictedWordCheck(invalid_names=["admin", "root"]),
-        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬", ";", ":"])]
-        )
+        SpecialCharacterCheck()
+    ])
     submit = SubmitField('Submit')
 
 class TaskForm(FlaskForm):
@@ -85,6 +87,6 @@ class TaskForm(FlaskForm):
         TaskAvailableNameCheck(),
         Length(max=20),
         RestrictedWordCheck(invalid_names=["admin", "root"]),
-        SpecialCharacterCheck(invalid_characters=["!", "\"", "£", "%", "^", "&", "*", "(", ")", "_", "+", "{", "}", "@", "~", "\'", ",", ".", "\\", "/", "|", "?", "¬", ";", ":"])]
-        )
+        SpecialCharacterCheck()
+    ])
     submit = SubmitField('Add')
