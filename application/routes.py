@@ -32,8 +32,12 @@ def home():
     
     done_lists = doneListNames()
     non_done_lists = notDoneListNames()
+    if len(done_lists) == 0:
+        done_lists_exists = False
+    else:
+        done_lists_exists = True
 
-    return render_template('home.html', non_done_lists=non_done_lists, done_lists=done_lists, list_details=list_details, form=list_input, message=message, error_text=error_text)
+    return render_template('home.html', non_done_lists=non_done_lists, done_lists=done_lists, done_lists_exists = done_lists_exists, list_details=list_details, form=list_input, message=message, error_text=error_text)
 
     
 # Create task
