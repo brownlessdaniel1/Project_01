@@ -3,4 +3,6 @@
 __pycache__/
 application/__pycache__
 tests/__pycache__
+tests/__pycache__/test_app.cpython-36-pytest-6.2.2.pyc
 jenkins_install.sh
+test-db

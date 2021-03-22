@@ -32,6 +32,7 @@ class TestBase(TestCase):
         db.session.remove()
         db.drop_all()
 
+
 class TestCreate(TestBase):
 
     # Test list create works.
@@ -55,6 +56,7 @@ class TestCreate(TestBase):
             follow_redirects=True
         )
         self.assertTrue(Task.query.filter_by(name="NewTask").first())
+
 
 class TestRead(TestBase):
     # Test read new list.
@@ -198,7 +200,6 @@ class TestValidators(TestBase):
             follow_redirects=True
         )
         self.assertIn(b"Field cannot be longer than 20 characters.", response.data)
-
 
 
 class testRobustDynamicLinks(TestBase):
