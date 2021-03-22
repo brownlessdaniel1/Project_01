@@ -1,0 +1,108 @@
+<html>
+    <head>
+        <title>ToDoLists</title>
+          <style>
+            body {
+                background-image: url(https://images.unsplash.com/photo-1601662528567-526cd06f6582?ixid=MXwxMjA3fDB8MHxzZWFyY2h8M3x8cGFwZXIlMjB0ZXh0dXJlfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80);
+                zoom: 150%;
+                font-weight: bold;
+                text-align: center;
+            }
+            table {
+                align-items: center;
+                text-align: center;
+                border-collapse: separate;
+                width: 100%;
+                height: 30%;
+            }
+            table th {
+                font-weight:bolder;
+                background-color:#b4b9bf;
+            }
+            table.table1 {
+                align-items: center;
+                text-align: inherit;
+                border-collapse: inherit;
+                height: inherit;
+            }
+            table.table1 tr:nth-of-type(odd){
+                background-color: #DAFBFE;      
+            }
+            table.table1 tr:nth-of-type(even){
+                background-color: #FBFEDA;      
+            }
+            table.table3 {
+                align-items: center;
+                text-align: inherit;
+                border-collapse: inherit;
+                background-color: #E1F9C7;
+                height: inherit;
+            }
+          </style>
+    </head>
+    <body>
+        <h1 style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif";>To Do Lists!</h1>
+        <div>
+            <p>Welcome!</p>
+            <p>To get started, click on a list to edit it, or create a new list.</p>
+            <hr>
+            {% if non_done_lists_exists == True %}
+            <table class="table1">
+                <th>list</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th>done tasks</th>
+                <th>total tasks</th>
+                <th>date created</th>
+                <th>date done</th>
+                {% for item in non_done_lists %}
+                <tr>
+                    <td><a href="{{ url_for('editList',list_name=item) }}">{{ item }}</a></td>
+                    <td><a href="{{ url_for('markDoneList',list_name=item) }}">done</a></td>
+                    <td><a href="{{ url_for('renameList',list_name=item) }}">rename</a></td>
+                    <td><a href="{{ url_for('deleteList',list_name=item) }}">delete</a></td>
+                    <td>{{ list_details[item][0] }}</td>
+                    <td>{{ list_details[item][1] }}</td>
+                    <td>{{ list_details[item][2] }}</td>
+                    <td style="text-align: center;">{{ list_details[item][3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <div style="display: inline-block;">
+                <p class="form">
+                    <form method="POST" action="">
+                    {{ form.hidden_tag() }}{{ form.user_input }}{{ form.submit }}
+                </p>
+            </div>
+            {% if done_lists_exists == True %}
+            <table class="table3">
+                <th>list</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th>done tasks</th>
+                <th>total tasks</th>
+                <th>date created</th>
+                <th>date done</th>
+                {% for item in done_lists %}
+                <tr>
+                    <td><a href="{{ url_for('editList',list_name=item) }}"><del>{{ item }}</del></a></td>
+                    <td><a href="{{ url_for('markNotDoneList',list_name=item) }}">not done</a></td>
+                    <td><a href="{{ url_for('renameList',list_name=item) }}">rename</a></td>
+                    <td><a href="{{ url_for('deleteList',list_name=item) }}">delete</a></td>
+                    <td>{{ list_details[item][0] }}</td>
+                    <td>{{ list_details[item][1] }}</td>
+                    <td>{{ list_details[item][2] }}</td>
+                    <td style="text-align: center;">{{ list_details[item][3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <hr>
+            <p>{{ message }}</p>
+            <p style="color: red;">{{ error_text }}</p>
+        </div>
+    </body>
+</html>

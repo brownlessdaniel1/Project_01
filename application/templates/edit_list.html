@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <title>{{ list_name }}</title>
+          <style>
+            body {
+                background-image: url(https://images.unsplash.com/photo-1601662528567-526cd06f6582?ixid=MXwxMjA3fDB8MHxzZWFyY2h8M3x8cGFwZXIlMjB0ZXh0dXJlfGVufDB8fDB8&ixlib=rb-1.2.1&w=1000&q=80);
+                zoom: 150%;
+                font-weight: bold;
+                text-align: center;
+            }
+            table {
+                align-items: center;
+                text-align: center;
+                border-collapse: separate;
+                width: 100%;
+                height: 30%;
+            }
+            table th {
+                font-weight:bolder;
+                background-color:#b4b9bf;
+            }
+            table.table1 {
+                align-items: center;
+                text-align: inherit;
+                border-collapse: inherit;
+                height: inherit;
+            }
+            table.table1 tr:nth-of-type(odd){
+                background-color: #DAFBFE;      
+            }
+            table.table1 tr:nth-of-type(even){
+                background-color: #FBFEDA;      
+            }
+            table.table3 {
+                align-items: center;
+                text-align: inherit;
+                border-collapse: inherit;
+                background-color: #E1F9C7;
+                height: inherit;
+            }
+          </style>
+    </head>
+    <body>
+        <h1 style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif";>{{ list_name }}</h1>
+        <div>
+            <a href="/">back</a>
+            <hr>
+            {% if non_done_tasks_exists == True %}
+            <table class="table1">
+                <th>task</th>
+                <th> </th>
+                <th> </th>
+                <th>date done</th>
+                {% for item in non_done_tasks %}
+                <tr>
+                    <td>{{ item }}</td>
+                    <td><a href="{{ url_for('markDoneTask',list_name=list_name,task_name=item) }}">done</a></td>
+                    <td><a href="{{ url_for('deleteTask',list_name=list_name,task_name=item) }}">delete</a></td>
+                    <td style="text-align: center;">{{ task_details[item][0] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <div style="display: inline-block;">
+                <p class="form">
+                    <form method="POST" action="">
+                    {{ form.hidden_tag() }}{{ form.user_input }}{{ form.submit }}
+                </p>
+            </div>
+            {% if done_tasks_exists == True %}
+            <table class="table3">
+                <th>task</th>
+                <th> </th>
+                <th> </th>
+                <th>date done</th>
+                {% for item in done_tasks %}
+                <tr>
+                    <td><del>{{ item }}</del></td>
+                    <td><a href="{{ url_for('markNotDoneTask',list_name=list_name,task_name=item) }}" >not done</a></td>
+                    <td><a href="{{ url_for('deleteTask',list_name=list_name,task_name=item) }}">delete</a></td>   
+                    <td style="text-align: center;">{{ task_details[item][0] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <hr>
+            <p>{{ message }}</p>
+            <p style="color: red;">{{ error_text }}</p>
+        </div>
+    </body>
+</html>
