@@ -1,6 +1,7 @@
 #!/bin/bash
 sudo apt-get update -y
 sudo apt-get install -y python3-venv python3-pip
+cd Project_01
 python3 -m venv .venv
 . .venv/bin/activate
 pip3 install -r requirements.txt
