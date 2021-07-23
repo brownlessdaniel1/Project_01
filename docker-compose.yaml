@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  database:
+    container_name: "database"
+    build: ./db
+    ports:
+        - target: 3306
+          published: 3306
+          protocol: tcp
+    volumes:
+      - type: volume
+        source: ./data
+        target: /var/lib/mysql/
+  app:
+    container_name: "app"
+    build: ./todolists
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+    depends_on:
+      - database
+  nginx:
+    container_name: "nginx"
+    image: nginx:alpine
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+    depends_on:
+      - app
+volumes:
+  data:
